@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Interactivo: Girona vs Rayo Vallecano</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (Stone, Amber) -->
+    <!-- Application Structure Plan: A dashboard-style, single-page application with a sticky navigation bar for quick access to thematic sections. The structure prioritizes immediate insight by placing the main prediction at the top, followed by interactive sections for tactical analysis, key match factors, and statistical comparisons. This non-linear structure is chosen over a simple report layout to allow users to explore the data based on their interests, making the complex analysis more digestible and engaging. Key interactions include a tabbed view for tactics and an interactive chart for stats. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Final Prediction -> Goal: Inform Instantly -> Viz: Prominent summary card -> Interaction: Static -> Justification: Delivers the core conclusion immediately.
+        - Team Form -> Goal: Compare Momentum -> Viz: Icon list (W/D/L) -> Interaction: Static -> Justification: Quick, visual, and easily scannable comparison.
+        - Tactical Systems -> Goal: Explain Complex Strategy -> Viz: Toggled HTML/CSS diagrams -> Interaction: Click tabs -> Justification: Simplifies complex formations and strategies into focused, manageable chunks.
+        - Head-to-Head Stats -> Goal: Quantitative Comparison -> Viz: Chart.js Horizontal Bar Chart -> Interaction: Hover Tooltips -> Justification: Chart.js provides a clear, interactive visual comparison of key metrics, which is more engaging than a static table.
+        - Key Factors (Injuries, H2H) -> Goal: Highlight Risks -> Viz: Grid of info cards -> Interaction: Static -> Justification: Organizes critical but disparate information into a clean, easily digestible format.
+        - Betting Recommendation -> Goal: Actionable Advice -> Viz: Highlighted recommendation card -> Interaction: Static -> Justification: Clearly separates the final, actionable advice from the analysis.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #d97706; /* amber-600 */
+            border-bottom-color: #d97706; /* amber-600 */
+        }
+        .tab-button.active {
+            background-color: #d97706; /* amber-600 */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!--
+    Instrucciones para alojar esta página web en un servidor gratuito (GitHub Pages):
+    1. Crea una cuenta en GitHub si no tienes una.
+    2. Crea un nuevo repositorio público.
+    3. Copia todo este código y guárdalo en un archivo llamado 'index.html'.
+    4. Sube este archivo 'index.html' a tu nuevo repositorio.
+    5. En la configuración del repositorio (Settings), busca la sección 'Pages'.
+    6. Selecciona la rama principal ('main' o 'master') como fuente.
+    7. Guarda los cambios. En unos minutos, tu sitio web estará disponible en la URL que GitHub te proporcionará.
+    -->
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl md:text-2xl font-bold text-stone-700">Girona <span class="text-amber-600">vs</span> Rayo</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link text-stone-600 font-semibold px-3 py-2 text-sm border-b-2 border-transparent">Visión General</a>
+                        <a href="#tactics" class="nav-link text-stone-600 font-semibold px-3 py-2 text-sm border-b-2 border-transparent">Análisis Táctico</a>
+                        <a href="#key-factors" class="nav-link text-stone-600 font-semibold px-3 py-2 text-sm border-b-2 border-transparent">Claves del Partido</a>
+                        <a href="#stats" class="nav-link text-stone-600 font-semibold px-3 py-2 text-sm border-b-2 border-transparent">Estadísticas</a>
+                        <a href="#forecast" class="nav-link text-stone-600 font-semibold px-3 py-2 text-sm border-b-2 border-transparent">Pronóstico</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="overview" class="mb-16 text-center">
+            <h2 class="text-3xl font-bold text-stone-800 mb-2">Análisis Pre-Partido: Jornada 1</h2>
+            <p class="text-lg text-stone-600 mb-8">Un duelo de estilos para arrancar LaLiga: el proyecto consolidado del Girona frente al impulso y la intensidad del Rayo Vallecano.</p>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 max-w-4xl mx-auto border border-amber-200">
+                <h3 class="text-2xl font-bold text-amber-700 mb-4">Pronóstico Rápido</h3>
+                <p class="text-stone-700 mb-6">El análisis sugiere una <strong class="font-semibold">victoria ajustada del Girona</strong>, pero el excelente estado de forma del Rayo lo convierte en un rival peligroso. Se espera un partido intenso y con goles.</p>
+                <div class="text-center">
+                     <div class="bg-amber-50 rounded-lg p-4 inline-block">
+                        <p class="font-bold text-lg text-amber-800">Apuesta Recomendada:</p>
+                        <p class="text-xl font-semibold text-stone-800 mt-1">Girona o Empate (1X) y Más de 1.5 Goles</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tactics" class="mb-16">
+            <h2 class="text-3xl font-bold text-stone-800 mb-4 text-center">La Batalla Táctica</h2>
+            <p class="text-lg text-stone-600 mb-8 max-w-3xl mx-auto text-center">Este partido es un choque de pizarras. El Girona buscará dominar a través de la posesión y la técnica, mientras que el Rayo apostará por una presión asfixiante y transiciones verticales para explotar la principal debilidad de su rival: la defensa.</p>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                <div class="mb-6 flex justify-center border-b border-stone-200">
+                    <button id="girona-tab" class="tab-button active text-lg font-semibold py-3 px-6 -mb-px border-b-2 border-transparent rounded-t-lg">Girona: Posesión y Ataque</button>
+                    <button id="rayo-tab" class="tab-button text-lg font-semibold py-3 px-6 -mb-px border-b-2 border-transparent rounded-t-lg">Rayo: Presión e Intensidad</button>
+                </div>
+
+                <div id="girona-content">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h4 class="font-bold text-xl text-stone-800 mb-3">El Plan de Míchel (4-2-3-1)</h4>
+                            <ul class="space-y-3 text-stone-700 list-disc list-inside">
+                                <li><strong>Control del balón:</strong> Construcción paciente desde la defensa para atraer la presión rival.</li>
+                                <li><strong>Superioridad en bandas:</strong> Búsqueda constante del 2 contra 1 con extremos y laterales para desbordar.</li>
+                                <li><strong>Juego interior:</strong> Uso del "tercer hombre" para superar líneas de presión y encontrar espacios.</li>
+                                <li class="text-red-600"><strong>Punto débil:</strong> Vulnerabilidad defensiva. Concedió 1.6 goles por partido la temporada pasada, una de las peores marcas de la liga.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded-lg text-center font-mono text-sm text-stone-600 border border-stone-200">
+                            <p>-- [ PORTERO ] --</p>
+                            <p class="my-2">LD -- DFC -- DFC -- LI</p>
+                            <p>-- [ MCD ] -- [ MCD ] --</p>
+                            <p class="my-2">ED --- [ MCO ] --- EI</p>
+                            <p>---- [ DELANTERO ] ----</p>
+                            <p class="mt-4 text-xs text-amber-700 font-sans">Esquema enfocado en la progresión y el ataque por los costados.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="rayo-content" class="hidden">
+                     <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h4 class="font-bold text-xl text-stone-800 mb-3">La Filosofía de Iñigo Pérez (4-2-3-1)</h4>
+                            <ul class="space-y-3 text-stone-700 list-disc list-inside">
+                                <li><strong>Presión alta y agresiva:</strong> Asfixiar la salida de balón del rival para forzar errores en campo contrario.</li>
+                                <li><strong>Transiciones rápidas:</strong> Una vez recuperado el balón, buscar la portería rival con ataques directos y verticales.</li>
+                                <li><strong>Adaptabilidad táctica:</strong> Realiza ajustes específicos según el rival, mostrando gran versatilidad.</li>
+                                <li class="text-green-600"><strong>Punto fuerte:</strong> Solidez defensiva (1.2 goles concedidos/partido) y mayor volumen de disparos que el Girona.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded-lg text-center font-mono text-sm text-stone-600 border border-stone-200">
+                            <p class="text-red-500">>> Presión >>></p>
+                            <p class="my-2">ED --- [ MCO ] --- EI</p>
+                            <p class="text-red-500">>> Presión >>></p>
+                            <p>-- [ MCD ] -- [ MCD ] --</p>
+                            <p class="mt-4 text-xs text-amber-700 font-sans">Bloque adelantado para robar y atacar rápidamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="key-factors" class="mb-16">
+            <h2 class="text-3xl font-bold text-stone-800 mb-4 text-center">Claves y Factores de Riesgo</h2>
+            <p class="text-lg text-stone-600 mb-8 max-w-3xl mx-auto text-center">Más allá de la táctica, tres factores determinarán el rumbo del partido: la inercia de resultados con la que llega cada equipo, las ausencias críticas que merman a las plantillas y el peso de la historia en sus enfrentamientos directos.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-amber-500">
+                    <h4 class="font-bold text-xl mb-3">Estado de Forma</h4>
+                    <p class="text-stone-600 mb-4">Dinámicas opuestas. El Rayo llega con una fuerte inercia positiva, mientras que el Girona cerró mal la temporada pasada.</p>
+                    <div class="space-y-2">
+                        <p><strong>Girona (Últimos 5):</strong> <span class="font-mono">L L W D L</span></p>
+                        <p><strong>Rayo (Últimos 5):</strong> <span class="font-mono">W W D D W</span></p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-red-500">
+                    <h4 class="font-bold text-xl mb-3">Bajas Críticas</h4>
+                    <p class="text-stone-600">El Girona sufre una ausencia demoledora: su máximo goleador, <strong class="font-semibold">Cristhian Stuani</strong>, no estará disponible. Esto representa un golpe directo a su potencial ofensivo.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500">
+                    <h4 class="font-bold text-xl mb-3">Historial (H2H)</h4>
+                    <p class="text-stone-600">Montilivi es un fortín para el Girona contra el Rayo. Sin embargo, el último enfrentamiento se lo llevó el equipo de Vallecas por 2-1, rompiendo la tendencia.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="stats" class="mb-16">
+            <h2 class="text-3xl font-bold text-stone-800 mb-4 text-center">Estadísticas Cara a Cara</h2>
+            <p class="text-lg text-stone-600 mb-8 max-w-3xl mx-auto text-center">Los números de la temporada pasada revelan el ADN de cada equipo. El Rayo fue un equipo más agresivo en ataque y más sólido en defensa, generando más oportunidades de gol y concediendo menos. Estos datos refuerzan la idea de un Rayo peligroso y eficiente.</p>
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                <div class="chart-container">
+                    <canvas id="statsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="forecast" class="text-center">
+            <h2 class="text-3xl font-bold text-stone-800 mb-4">Pronóstico Final y Apuesta</h2>
+             <p class="text-lg text-stone-600 mb-8 max-w-3xl mx-auto">Teniendo en cuenta la solidez del proyecto del Girona y su ventaja histórica como local, se le considera el favorito. No obstante, el gran momento del Rayo y la importante baja de Stuani equilibran la balanza y abren la puerta a un partido con goles y emoción hasta el final.</p>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h4 class="text-xl font-bold text-stone-800 mb-2">Ganador Probable</h4>
+                    <p class="text-5xl font-bold text-amber-600">Girona</p>
+                    <p class="text-stone-600 mt-2">(Victoria ajustada)</p>
+                </div>
+                <div class="bg-amber-600 text-white rounded-xl shadow-lg p-8">
+                    <h4 class="text-xl font-bold mb-2">Apuesta Segura Recomendada</h4>
+                    <p class="text-2xl font-bold">Girona o Empate (1X) y Más de 1.5 Goles</p>
+                    <p class="text-lg mt-2">Combina la fortaleza local del Girona con la alta probabilidad de goles de ambos equipos.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-16 py-6">
+        <div class="container mx-auto text-center text-stone-500 text-sm">
+            <p>&copy; 2025 Análisis Deportivo Interactivo. Todos los datos son para fines informativos.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const gironaTab = document.getElementById('girona-tab');
+            const rayoTab = document.getElementById('rayo-tab');
+            const gironaContent = document.getElementById('girona-content');
+            const rayoContent = document.getElementById('rayo-content');
+
+            gironaTab.addEventListener('click', () => {
+                gironaTab.classList.add('active');
+                rayoTab.classList.remove('active');
+                gironaContent.classList.remove('hidden');
+                rayoContent.classList.add('hidden');
+            });
+
+            rayoTab.addEventListener('click', () => {
+                rayoTab.classList.add('active');
+                gironaTab.classList.remove('active');
+                rayoContent.classList.remove('hidden');
+                gironaContent.classList.add('hidden');
+            });
+
+            const statsData = {
+                labels: ['Goles Recibidos (Media)', 'Goles Anotados (Media)', 'Disparos (Media)', 'Faltas Cometidas (Media)'],
+                datasets: [
+                    {
+                        label: 'Girona',
+                        data: [1.6, 1.2, 9.4, 11.5],
+                        backgroundColor: 'rgba(212, 119, 6, 0.7)',
+                        borderColor: 'rgba(212, 119, 6, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Rayo Vallecano',
+                        data: [1.2, 1.1, 11.5, 13.74],
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            const statsConfig = {
+                type: 'bar',
+                data: statsData,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Comparativa Estadística (Temporada 2024-25)'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += context.parsed.x.toFixed(2);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Valor Promedio por Partido'
+                            }
+                        }
+                    }
+                }
+            };
+
+            const statsChartCtx = document.getElementById('statsChart').getContext('2d');
+            new Chart(statsChartCtx, statsConfig);
+            
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
